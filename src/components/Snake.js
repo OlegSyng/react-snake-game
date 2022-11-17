@@ -1,28 +1,29 @@
-import React from "react";
+import React, {Fragment} from "react";
+
+import classes from './Snake.module.css';
+
+
+
+
 
 const Snake = () => {
-    let lastRenderTime = 0;
-    const SNAKE_SPEED = 1;
+    
+    
+    let snakeBody = [{x: 26, y: 26}];
 
-    function generateMovement(currentTime) {
-        window.requestAnimationFrame(generateMovement);
-        const secondsSinceLastRender = (currentTime - lastRenderTime) / 1000;
-        if (secondsSinceLastRender < 1 / SNAKE_SPEED) return;
-
-        lastRenderTime = currentTime;
-        console.log('Render');
-
-        update();
-        draw();
-    }
-
-    window.requestAnimationFrame(generateMovement);
-
+   
     
 
+    var snakeSegment = <div className={classes.snake}></div>;
+    
+    const snake = snakeBody.map(segment => {
+        snakeSegment.style.gridRowStart = segment.x;
+        snakeSegment.style.gridColumnStart = segment.y;
+        return snakeSegment;
+    }) 
 
     return (
-        <div>Snake</div>
+        <Fragment>{snake}</Fragment>
     )
 };
 

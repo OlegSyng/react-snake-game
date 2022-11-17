@@ -1,0 +1,82 @@
+.navbar {
+    display: flex;
+    position: fixed;
+    top: 0;
+    width: 100vw;
+    height: 60px;
+    justify-content: space-around;
+    align-items: center;
+    box-sizing: border-box;
+    padding: 0 1rem;
+}
+
+.navbar > * {
+    z-index: 5;
+    opacity: 0;
+}
+
+.navbar-score {
+    flex-grow: 1;
+    font: inherit;
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: #fff;
+    text-transform: uppercase;
+}
+
+.navbar-score span {
+    margin-left: 1rem;
+    font-size: 1.6rem;
+    font-weight: 700;
+    text-shadow: 0px 1px 5px var(--snake-game-color-dark-blue);
+}
+
+.navbar::before {
+    content: '';
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 0px;
+    background: var(--snake-game-color-dark-blue);
+    background: linear-gradient(180deg, rgba(29,53,87,1) 0%, rgba(38,70,83,1) 66%, rgba(38,70,83,1) 84%, rgba(38,70,83,1) 90%, rgba(42,157,143,1) 100%);
+    transition: height 0.2s ease-in-out;
+}
+
+.navbar:hover::before {
+    height: 60px;
+}
+
+.navbar:hover > * {
+    opacity: 1;
+    animation: navbarElementsAppear 0.4s;
+}
+
+@keyframes navbarElementsAppear {
+    0% {
+        opacity: 0;
+    }
+    50% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+
+}
+
+
+@media screen and (min-width: 480px) {
+    .navbar {
+        padding: 0 2rem;
+    }
+}
+
+@media screen and (min-width: 1024px) {
+    .navbar {
+        padding: 0 8rem;
+    }
+}
+
+

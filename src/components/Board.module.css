@@ -4,7 +4,7 @@
     height: 100vh;
     justify-content: center;
     align-items: center;
-    background-color: #264653;
+    background-color: var(--snake-game-color-blue);
 }
 
 .game-board {
@@ -13,5 +13,5 @@
     height: 100vmin;
     grid-template-columns: repeat(51, 1fr);
     grid-template-rows: repeat(51, 1fr);
-    background-color: #edede9;
+    background-color: var(--snake-game-color-grey);
 }
