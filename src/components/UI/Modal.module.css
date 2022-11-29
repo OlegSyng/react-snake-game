@@ -1,41 +1,43 @@
 .backdrop {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index: 10;
-    background-color: rgba(0,0,0,0.5);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 10;
+  background-color: rgba(0, 0, 0, 0.5);
 }
 
 .modal {
-    position: fixed;
-    top: 20vh;
-    left: 5%;
-    width: 90%;
-    background-color: white;
-    padding: 2rem;
-    font-size: 1.5rem;
-    border-radius: 14px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
-    z-index: 30;
-    animation: slide-down 300ms ease-out forwards;
+  position: fixed;
+  top: 25vh;
+  left: 5%;
+  width: 90%;
+  background-color: var(--snake-game-color-grey);
+  padding: 2rem;
+  box-sizing: border-box;
+  font-size: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  z-index: 30;
+  animation: slide-down 300ms ease-out forwards;
 }
 
-@media (min-width: 768px) {
-    .modal {
-      width: 70rem;
-      left: calc(50% - 35rem);
-    }
+
+@media screen and (min-width: 1024px) {
+  .modal {
+    width: 62rem;
+    left: calc(50% - 31rem);
+    
+  }
 }
-  
+
 @keyframes slide-down {
-    from {
-      opacity: 0;
-      transform: translateY(-3rem);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
+  from {
+    opacity: 0;
+    transform: translateY(-3rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

@@ -1,30 +1,9 @@
-import React, {Fragment} from "react";
+import React from "react";
+import classes from "./Snake.module.css";
 
-import classes from './Snake.module.css';
+const Snake = (props) => {
 
-
-
-
-
-const Snake = () => {
-    
-    
-    let snakeBody = [{x: 26, y: 26}];
-
-   
-    
-
-    var snakeSegment = <div className={classes.snake}></div>;
-    
-    const snake = snakeBody.map(segment => {
-        snakeSegment.style.gridRowStart = segment.x;
-        snakeSegment.style.gridColumnStart = segment.y;
-        return snakeSegment;
-    }) 
-
-    return (
-        <Fragment>{snake}</Fragment>
-    )
+  return <div style={{ gridRowStart: props.segmentPosition.x, gridColumnStart: props.segmentPosition.y }} className={classes.snake}></div>
 };
 
 export default Snake;

@@ -3,7 +3,7 @@
     position: fixed;
     top: 0;
     width: 100vw;
-    height: 60px;
+    height: 80px;
     justify-content: space-around;
     align-items: center;
     box-sizing: border-box;
@@ -45,7 +45,7 @@
 }
 
 .navbar:hover::before {
-    height: 60px;
+    height: 80px;
 }
 
 .navbar:hover > * {

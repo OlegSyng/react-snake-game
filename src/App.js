@@ -1,35 +1,30 @@
-import React from "react";
+import React, { useState } from "react";
 
 import Board from "./components/Board";
-import Snake from "./components/Snake";
-import Navbar from "./components/UI/Navbar";
-
-
+import Modal from "./components/UI/Modal";
+import Popup from "./components/Popup";
 
 function App() {
-  let lastRenderTime = 0;
-  const SNAKE_SPEED = 1;
-  
-  function generateMovement(currentTime) {
-    window.requestAnimationFrame(generateMovement);
-    const secondsSinceLastRender = (currentTime - lastRenderTime) / 1000;
-    if (secondsSinceLastRender < 1 / SNAKE_SPEED) return;
+  const [restartGame, setRestartGame] = useState(false);
+  const [gameOver, setGameOver] = useState(false);
 
-    lastRenderTime = currentTime;
-    //console.log('Render');
+  const gameOverHandler = () => {
+    setGameOver(true);
+  };
 
-    //update();
-    //draw();
+  const restartHandler = () => {
+    setGameOver(false);
+    setRestartGame(true)
+    //window.location = '/'
   }
 
-  window.requestAnimationFrame(generateMovement);
 
   return (
     <>
-      <Navbar />
-      <Board>
-        <Snake />
-      </Board>
+      {gameOver && <Modal>
+        <Popup onRestart={restartHandler} />
+      </Modal>}
+      <Board onGameOver={gameOverHandler} restart={restartGame}/>
     </>
   );
 }
