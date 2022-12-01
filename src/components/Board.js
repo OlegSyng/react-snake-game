@@ -80,10 +80,7 @@ const objectsPositionReducer = (state, action) => {
 
   switch (action.type) {
     case "Restart":
-      inputDirection = 'ArrowUp';
-      lastInputDirection = '';
-      isPaused = false;
-      return objectsPosition;
+      return {...objectsPosition};
     case "Pause":
       return {
         snakeBody: snakeBody,
@@ -136,9 +133,13 @@ const objectsPositionReducer = (state, action) => {
     
 };
 
-const Board = (props) => {
+const Board = ({onGameOver, restart, resetApp, onScoreUpdate}) => {
   const [objectsPositionState, dispatchObjectsPosition] = useReducer(objectsPositionReducer, objectsPosition);
-  const [allowRestart, setAllowRestart] = useState(false);
+  const [snakeSpeed, setSnakeSpeed] = useState(6);
+  const [gameScore, setGameScore] = useState(0);
+  const {snakeBody, foodBody} = objectsPositionState;
+
+  let SNAKE_SPEED = snakeSpeed;
 
   useEffect(() => {
     const keyDownHandler = (event) => {
@@ -178,16 +179,25 @@ const Board = (props) => {
 
   useEffect(() => {
     const timeoutIdentifier = setTimeout(() => { 
+      if (restart) {
+        inputDirection = 'ArrowUp';
+        lastInputDirection = '';
+        isPaused = false;
+        dispatchObjectsPosition({type: "Restart", differenceX: null, differenceY: null});
+        resetApp();
+        return;
+      };
+
       if (outsideGrid(snakeBody[0]) || onSnake(snakeBody[0], snakeBody, { ignoreHead: true })) {
         inputDirection = "";
-        setAllowRestart(true);
-        props.onGameOver();
-      }
+        onGameOver();
+        return;
+      };
 
       if (isPaused) {
         dispatchObjectsPosition({type: "Pause", differenceX: null, differenceY: null});
         return
-      }
+      };
   
       switch (inputDirection) {
         case "ArrowUp":
@@ -202,24 +212,16 @@ const Board = (props) => {
         case "ArrowRight":
           dispatchObjectsPosition({type: "ArrowRight", differenceX: 0, differenceY: -1});
           break;
-      }
+      };
+      
+      setGameScore((snakeBody.length * 5) - 15);
+      onScoreUpdate(gameScore);
     }, 1000 / SNAKE_SPEED);
 
     return () => {
       clearTimeout(timeoutIdentifier);
     };
-  }, [isPaused, inputDirection, objectsPositionState]);
-
-  const SNAKE_SPEED = 4;
-  const {snakeBody, foodBody} = objectsPositionState;
-
-
-  const snake = snakeBody.map((segmentPosition) => (
-    <Snake key={segmentPosition.id} segmentPosition={segmentPosition}></Snake>
-  ));
-
-  const score = (snakeBody.length * 5) - 15;
- 
+  }, [restart, isPaused, snakeBody, inputDirection, objectsPositionState]);
 
   const pauseHandler = () => {
     if (!isPaused) {
@@ -231,22 +233,17 @@ const Board = (props) => {
   };
 
 
-  if (allowRestart && props.restart) {
-    console.log('Rrestart')
-    dispatchObjectsPosition({type: "Restart", differenceX: null, differenceY: null})
-    setAllowRestart(false);
-  }
+  const snake = snakeBody.map((segmentPosition) => (
+    <Snake key={segmentPosition.id} segmentPosition={segmentPosition}></Snake>
+  ));
 
-  
-  //console.log('render')
-  
-
-  
-
+  const snakeSpeedHandler = (choice) => {
+    setSnakeSpeed(choice.value);
+  };
 
   return (
     <>
-      <Navbar score={score} onPause={pauseHandler} isPaused={isPaused} />
+      <Navbar score={gameScore} onPause={pauseHandler} isPaused={isPaused} onSnakeSpeedChange={snakeSpeedHandler} />
       <div className={classes["game-board__background"]}>
         <div className={classes["game-board"]}>
           {snake}

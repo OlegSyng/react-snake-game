@@ -5,26 +5,31 @@ import Modal from "./components/UI/Modal";
 import Popup from "./components/Popup";
 
 function App() {
-  const [restartGame, setRestartGame] = useState(false);
-  const [gameOver, setGameOver] = useState(false);
+  const [appState, setAppState] = useState({gameOver: false, restart: false});
+  const [score, setScore] = useState(0);
+  const {gameOver, restart} = appState;
+  
 
   const gameOverHandler = () => {
-    setGameOver(true);
+    setAppState({gameOver: true, restart: false});
   };
 
   const restartHandler = () => {
-    setGameOver(false);
-    setRestartGame(true)
-    //window.location = '/'
-  }
+    setAppState({gameOver: false, restart: true});
+  };
 
+  const resetAppHandler = () => {
+    setAppState({gameOver: false, restart: false});
+  };
+
+  const scoreCounter = (points) => {
+    setScore(points);
+  };
 
   return (
     <>
-      {gameOver && <Modal>
-        <Popup onRestart={restartHandler} />
-      </Modal>}
-      <Board onGameOver={gameOverHandler} restart={restartGame}/>
+      { gameOver && <Modal><Popup onRestart={restartHandler} score={score} /></Modal> }
+      <Board onGameOver={gameOverHandler} restart={restart}  resetApp={resetAppHandler} onScoreUpdate={scoreCounter} />
     </>
   );
 }
