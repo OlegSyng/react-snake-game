@@ -1,4 +1,11 @@
 import React, { useState, useEffect, useReducer } from "react";
+import { useSelector, useDispatch } from "react-redux";
+
+import { snakeActions } from "../store/snake-slice";
+import { foodActions } from "../store/food-slice";
+import { gameActions } from "../store/game-slice";
+
+import { GRID_SIZE } from "../store/food-slice";
 
 import Navbar from "./UI/Navbar";
 import Snake from "./Snake";
@@ -6,21 +13,10 @@ import Food from "./Food";
 
 import classes from "./Board.module.css";
 
-const GRID_SIZE = 51;
 let inputDirection = 'ArrowUp';
 let lastInputDirection = '';
-let isPaused = false;
 
 
-const objectsPosition = {
-  snakeBody: [
-    { id: Math.random(), x: 26, y: 26 },
-    { id: Math.random(), x: 27, y: 26 },
-    { id: Math.random(), x: 28, y: 26 },
-  ],
-  foodBody: { x: 20, y: 26 },
-  gamePause: false
-};
 
 const outsideGrid = (position) => {
   return (position.x < 1 || position.x >= GRID_SIZE || position.y < 1 || position.y >= GRID_SIZE);
@@ -44,21 +40,6 @@ const objectsPositionReducer = (state, action) => {
   const { snakeBody, foodBody } = state;
   const snakeHead = snakeBody[0];
 
-  
-  const randomGridPosition = () => {
-    return {
-        x: Math.floor(Math.random() * GRID_SIZE) + 1,
-        y: Math.floor(Math.random() * GRID_SIZE) + 1
-    }
-  };
-
-  const getRandomFoodPosition = () => {
-    let newFoodPosition;
-    while (newFoodPosition == null || onSnake(newFoodPosition, snakeBody)) {
-      newFoodPosition = randomGridPosition();
-    }
-    return newFoodPosition;
-  };
 
   const eatFood = (snakeFirstSegment, food) => {
     const deltaX = snakeFirstSegment.x - food.x;
@@ -78,94 +59,100 @@ const objectsPositionReducer = (state, action) => {
     gamePause: false
   };
 
-  switch (action.type) {
-    case "Restart":
-      return {...objectsPosition};
-    case "Pause":
-      return {
-        snakeBody: snakeBody,
-        foodBody: foodBody,
-        gamePause: true
-      }
-    case "ArrowUp":
-      if (eatFood(snakeHead, foodBody)) {
-        return snakeEatsFoodState;
-      } else {
-        return {
-          snakeBody: [{ id: Math.random(), x: snakeBody[0].x - 1, y: snakeBody[0].y }, ...snakeBody.slice(0, -1)],
-          foodBody: foodBody,
-          gamePause: false
-        };
-      } 
-    case "ArrowDown":
-      if (eatFood(snakeHead, foodBody)) {
-        return snakeEatsFoodState;
-      } else {
-        return {
-          snakeBody: [{ id: Math.random(), x: snakeBody[0].x + 1, y: snakeBody[0].y }, ...snakeBody.slice(0, -1)],
-          foodBody: foodBody,
-          gamePause: false
-        };
-      } 
-    case "ArrowLeft":
-      if (eatFood(snakeHead, foodBody)) {
-        return snakeEatsFoodState;
-      } else {
-        return {
-          snakeBody: [{ id: Math.random(), x: snakeBody[0].x, y: snakeBody[0].y - 1 }, ...snakeBody.slice(0, -1)],
-          foodBody: foodBody,
-          gamePause: false
-        };
-      } 
-    case "ArrowRight":
-      if (eatFood(snakeHead, foodBody)) {
-        return snakeEatsFoodState;
-      } else {
-        return {
-          snakeBody: [{ id: Math.random(), x: snakeBody[0].x, y: snakeBody[0].y + 1 }, ...snakeBody.slice(0, -1)],
-          foodBody: foodBody,
-          gamePause: false
-        };
-      }
-    default:
-      return objectsPosition; 
-  };
+  // switch (action.type) {
+  //   case "Restart":
+  //     return {...objectsPosition};
+  //   case "Pause":
+  //     return {
+  //       snakeBody: snakeBody,
+  //       foodBody: foodBody,
+  //       gamePause: true
+  //     }
+  //   case "ArrowUp":
+  //     if (eatFood(snakeHead, foodBody)) {
+  //       return snakeEatsFoodState;
+  //     } else {
+  //       return {
+  //         snakeBody: [{ id: Math.random(), x: snakeBody[0].x - 1, y: snakeBody[0].y }, ...snakeBody.slice(0, -1)],
+  //         foodBody: foodBody,
+  //         gamePause: false
+  //       };
+  //     } 
+  //   case "ArrowDown":
+  //     if (eatFood(snakeHead, foodBody)) {
+  //       return snakeEatsFoodState;
+  //     } else {
+  //       return {
+  //         snakeBody: [{ id: Math.random(), x: snakeBody[0].x + 1, y: snakeBody[0].y }, ...snakeBody.slice(0, -1)],
+  //         foodBody: foodBody,
+  //         gamePause: false
+  //       };
+  //     } 
+  //   case "ArrowLeft":
+  //     if (eatFood(snakeHead, foodBody)) {
+  //       return snakeEatsFoodState;
+  //     } else {
+  //       return {
+  //         snakeBody: [{ id: Math.random(), x: snakeBody[0].x, y: snakeBody[0].y - 1 }, ...snakeBody.slice(0, -1)],
+  //         foodBody: foodBody,
+  //         gamePause: false
+  //       };
+  //     } 
+  //   case "ArrowRight":
+  //     if (eatFood(snakeHead, foodBody)) {
+  //       return snakeEatsFoodState;
+  //     } else {
+  //       return {
+  //         snakeBody: [{ id: Math.random(), x: snakeBody[0].x, y: snakeBody[0].y + 1 }, ...snakeBody.slice(0, -1)],
+  //         foodBody: foodBody,
+  //         gamePause: false
+  //       };
+  //     }
+  //   default:
+  //     return objectsPosition; 
+  //};
     
 };
 
 const Board = ({onGameOver, restart, resetApp, onScoreUpdate}) => {
-  const [objectsPositionState, dispatchObjectsPosition] = useReducer(objectsPositionReducer, objectsPosition);
-  const [snakeSpeed, setSnakeSpeed] = useState(6);
-  const [gameScore, setGameScore] = useState(0);
-  const {snakeBody, foodBody} = objectsPositionState;
+  // const [objectsPositionState, dispatchObjectsPosition] = useReducer(objectsPositionReducer, objectsPosition);
 
-  let SNAKE_SPEED = snakeSpeed;
+  const dispatch = useDispatch();
+  const snake = useSelector((state) => state.snake);
+  const food = useSelector((state) => state.food);
+  const game = useSelector((state) => state.game);
+
+  // const [snakeSpeed, setSnakeSpeed] = useState(6);
+  // const [gameScore, setGameScore] = useState(0);
+  // const {snakeBody, foodBody} = objectsPositionState;
+
+  // let SNAKE_SPEED = snakeSpeed;
 
   useEffect(() => {
     const keyDownHandler = (event) => {
       switch(event.key) {
         case "ArrowUp":
-          if (inputDirection !== 'ArrowDown') {
+          if (inputDirection !== 'arrowDown') {
             lastInputDirection = inputDirection;
-            inputDirection = 'ArrowUp';
+            inputDirection = 'arrowUp';
           }
           break;
         case "ArrowDown":
-          if (inputDirection !== 'ArrowUp') {
+          if (inputDirection !== 'arrowUp') {
             lastInputDirection = inputDirection;
-            inputDirection = 'ArrowDown';
+            inputDirection = 'arrowDown';
           }
           break;
         case "ArrowLeft":
-          if (inputDirection !== 'ArrowRight') {
+          if (inputDirection !== 'arrowRight') {
             lastInputDirection = inputDirection;
-            inputDirection = 'ArrowLeft';
+            inputDirection = 'arrowLeft';
           }
           break;
         case "ArrowRight":
-          if (inputDirection !== 'ArrowLeft') {
+          if (inputDirection !== 'arrowLeft') {
             lastInputDirection = inputDirection;
-            inputDirection = 'ArrowRight';
+            inputDirection = 'arrowRight';
           } 
           break;
       };
@@ -179,8 +166,15 @@ const Board = ({onGameOver, restart, resetApp, onScoreUpdate}) => {
 
   useEffect(() => {
     const timeoutIdentifier = setTimeout(() => { 
+      if(game.) {
+        inputDirection = 'arrowUp';
+        lastInputDirection = '';
+        dispatch(gameActions.toggleRestart());
+      }
+
+
       if (restart) {
-        inputDirection = 'ArrowUp';
+        inputDirection = 'arrowUp';
         lastInputDirection = '';
         isPaused = false;
         dispatchObjectsPosition({type: "Restart", differenceX: null, differenceY: null});
@@ -198,30 +192,33 @@ const Board = ({onGameOver, restart, resetApp, onScoreUpdate}) => {
         dispatchObjectsPosition({type: "Pause", differenceX: null, differenceY: null});
         return
       };
-  
+
       switch (inputDirection) {
-        case "ArrowUp":
-          dispatchObjectsPosition({type: "ArrowUp", differenceX: 1, differenceY: 0});
+        case "arrowUp":
+          dispatch(snakeActions.arrowUp());
           break;
-        case "ArrowDown":
-          dispatchObjectsPosition({type: "ArrowDown", differenceX: -1, differenceY: 0});
+        case "arrowDown":
+          dispatch(snakeActions.arrowDown());
           break;
-        case "ArrowLeft":
-          dispatchObjectsPosition({type: "ArrowLeft", differenceX: 0, differenceY: 1});
+        case "arrowLeft":
+          dispatch(snakeActions.arrowLeft());
           break;
-        case "ArrowRight":
-          dispatchObjectsPosition({type: "ArrowRight", differenceX: 0, differenceY: -1});
+        case "arrowRight":
+          dispatch(snakeActions.arrowRight());
+          break;
+        default:
+          console.log('Unknown input provided.');
           break;
       };
       
       setGameScore((snakeBody.length * 5) - 15);
       onScoreUpdate(gameScore);
-    }, 1000 / SNAKE_SPEED);
+    }, 1000 / game.snakeSpeed);
 
     return () => {
       clearTimeout(timeoutIdentifier);
     };
-  }, [restart, isPaused, snakeBody, inputDirection, objectsPositionState]);
+  }, [restart, isPaused, snakeBody, game, inputDirection]);
 
   const pauseHandler = () => {
     if (!isPaused) {
@@ -233,7 +230,7 @@ const Board = ({onGameOver, restart, resetApp, onScoreUpdate}) => {
   };
 
 
-  const snake = snakeBody.map((segmentPosition) => (
+  const drawSnake = snake.map((segmentPosition) => (
     <Snake key={segmentPosition.id} segmentPosition={segmentPosition}></Snake>
   ));
 
@@ -246,7 +243,7 @@ const Board = ({onGameOver, restart, resetApp, onScoreUpdate}) => {
       <Navbar score={gameScore} onPause={pauseHandler} isPaused={isPaused} onSnakeSpeedChange={snakeSpeedHandler} />
       <div className={classes["game-board__background"]}>
         <div className={classes["game-board"]}>
-          {snake}
+          {drawSnake}
           <Food foodPosition={foodBody} />
         </div>
       </div>
