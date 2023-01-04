@@ -1,4 +1,6 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createAction, createSlice } from "@reduxjs/toolkit";
+
+const restartGame = createAction('game/restartGame');
 
 const initialState = [
   { id: Math.random(), x: 26, y: 26 },
@@ -7,45 +9,37 @@ const initialState = [
 ];
 
 const snakeSlice = createSlice({
-  name: "snake",
+  name: 'snake',
   initialState: initialState,
   reducers: {
-    arrowUp: (state) => {
+    snakeMove: (state, action) => {
       const snakeHead = state[0];
       state.unshift({
         id: Math.random(),
-        x: snakeHead.x - 1,
-        y: snakeHead.y 
-      }).slice(0, -1);
+        x: snakeHead.x + action.payload.userInput.deltaX,
+        y: snakeHead.y + action.payload.userInput.deltaY,
+      });
+      state.pop();
     },
-    arrowDown: (state) => {
+    snakeEats: (state, action) => {
       const snakeHead = state[0];
       state.unshift({
         id: Math.random(),
-        x: snakeHead.x + 1,
-        y: snakeHead.y 
-      }).slice(0, -1);
-    },
-    arrowLeft: (state) => {
-      const snakeHead = state[0];
+        x: snakeHead.x + action.payload.userInput.deltaX,
+        y: snakeHead.y + action.payload.userInput.deltaY,
+      });
+      const newSnakeHead = state[0];
       state.unshift({
         id: Math.random(),
-        x: snakeHead.x,
-        y: snakeHead.y - 1 
-      }).slice(0, -1);
-    },
-    arrowRight: (state) => {
-      const snakeHead = state[0];
-      state.unshift({
-        id: Math.random(),
-        x: snakeHead.x,
-        y: snakeHead.y + 1 
-      }).slice(0, -1);
-    },
-    restartSnake: (state) => {
-      state = initialState;
+        x: newSnakeHead.x + action.payload.userInput.deltaX,
+        y: newSnakeHead.y + action.payload.userInput.deltaY,
+      });
+      state.pop();
     },
   },
+  extraReducers: (builder) => {
+    builder.addCase(restartGame, () => initialState)
+  }
 });
 
 export const snakeActions = snakeSlice.actions;

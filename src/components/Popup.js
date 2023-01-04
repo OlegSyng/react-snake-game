@@ -10,7 +10,7 @@ const Popup = () => {
   const gameScore = useSelector((state) => state.game.score);
 
   const onRestartHandler = () => {
-    dispatch(gameActions)
+    dispatch(gameActions.restartGame())
   }
 
   return (

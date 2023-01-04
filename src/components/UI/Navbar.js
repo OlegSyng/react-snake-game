@@ -1,11 +1,15 @@
 import React from "react";
+import { useSelector, useDispatch } from "react-redux";
 import Select from "react-select";
+
+import { gameActions } from "../../store/game-slice";
 
 import Button from "./Button";
 import classes from "./Navbar.module.css";
 
-const Navbar = (props) => {
-  const isGamePaused = props.isPaused;
+const Navbar = () => {
+  const dispatch = useDispatch();
+  const game = useSelector((state) => state.game);
 
   const snakeSpeedOptions = [
     {value: 2, label: 1},
@@ -20,14 +24,22 @@ const Navbar = (props) => {
     {value: 20, label: 10},
   ];
 
+  const snakeSpeedHandler = (choice) => {
+    dispatch(gameActions.snakeSpeed(choice.value));
+  }
+
+  const onPauseHandler = () => {
+    dispatch(gameActions.togglePause());
+  }
+
   return (
     <div className={classes.navbar}>
       <div className={classes["navbar-score"]}>
-        Score<span>{props.score}</span>
+        Score<span>{game.score}</span>
       </div>
-      <Select options={snakeSpeedOptions} name="Snake speed" onChange={props.onSnakeSpeedChange} defaultValue={snakeSpeedOptions[2]} />
-      <Button onClick={props.onPause}>
-        {!isGamePaused ? "Pause" : "Resume"}
+      <Select options={snakeSpeedOptions} name="Snake speed" onChange={snakeSpeedHandler} defaultValue={snakeSpeedOptions[0]} />
+      <Button onClick={onPauseHandler}>
+        {!game.isPaused ? "Pause" : "Resume"}
       </Button>
     </div>
   );
