@@ -38,7 +38,27 @@ const snakeSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(restartGame, () => initialState)
+    builder.addCase(restartGame, (state, action) => {
+      //Head position on the center of the board.
+      const headPosition = Math.floor(action.payload / 2) + 1;
+      return [
+        {
+          id: Math.random(), 
+          x: headPosition, 
+          y: headPosition
+        },
+        {
+          id: Math.random(), 
+          x: headPosition + 1,
+          y: headPosition
+        },
+        {
+          id: Math.random(), 
+          x: headPosition + 2,
+          y: headPosition
+        },
+      ] 
+    })
   }
 });
 

@@ -8,9 +8,10 @@ import classes from "./Popup.module.css";
 const Popup = () => {
   const dispatch = useDispatch();
   const gameScore = useSelector((state) => state.game.score);
+  const gridSize = useSelector((state) => state.game.gridSize);
 
   const onRestartHandler = () => {
-    dispatch(gameActions.restartGame())
+    dispatch(gameActions.restartGame(gridSize))
   }
 
   return (

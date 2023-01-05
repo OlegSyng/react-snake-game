@@ -1,9 +1,13 @@
 import { createAction, createSlice } from "@reduxjs/toolkit";
-const snakeEats = createAction('snake/snakeEats');
+const snakeEats = createAction("snake/snakeEats");
 
 const initialState = {
   userInput: {
     deltaX: -1,
+    deltaY: 0,
+  },
+  lastUserInput: {
+    deltaX: 1,
     deltaY: 0,
   },
   isPaused: false,
@@ -20,38 +24,51 @@ const gameSlice = createSlice({
     userInput: (state, action) => {
       switch (action.payload) {
         case "ArrowUp":
-          if (state.userInput.deltaX !== 1) {
+          if (state.lastUserInput.deltaX !== 1) {
             state.userInput.deltaX = -1;
             state.userInput.deltaY = 0;
           }
           break;
         case "ArrowDown":
-          if (state.userInput.deltaX !== -1) {
+          if (state.lastUserInput.deltaX !== -1) {
             state.userInput.deltaX = 1;
             state.userInput.deltaY = 0;
           }
           break;
         case "ArrowLeft":
-          if (state.userInput.deltaY !== 1) {
+          if (state.lastUserInput.deltaY !== 1) {
             state.userInput.deltaX = 0;
             state.userInput.deltaY = -1;
           }
           break;
         case "ArrowRight":
-          if (state.userInput.deltaY !== -1) {
+          if (state.lastUserInput.deltaY !== -1) {
             state.userInput.deltaX = 0;
             state.userInput.deltaY = 1;
           }
           break;
       }
     },
+    lastUserInput: (state, action) => {
+        state.lastUserInput.deltaX = action.payload.deltaX;
+        state.lastUserInput.deltaY = action.payload.deltaY;
+    },
     togglePause: (state) => {
       state.isPaused = !state.isPaused;
     },
     setGameOver: (state) => {
       state.isGameOver = true;
+      state.isPaused = true;
     },
-    restartGame: () => initialState,
+    restartGame: (state) => {
+        state.userInput.deltaX = -1;
+        state.userInput.deltaY = 0;
+        state.lastUserInput.deltaX = -1;
+        state.lastUserInput.deltaY = 0;
+        state.isPaused = false;
+        state.isGameOver = false;
+        state.score = 0
+    },
     snakeSpeed: (state, action) => {
       state.snakeSpeed = action.payload;
     },
@@ -61,9 +78,9 @@ const gameSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(snakeEats, (state) => {
-        state.score += 5;
-    })
-  }
+      state.score += 5;
+    });
+  },
 });
 
 export const gameActions = gameSlice.actions;

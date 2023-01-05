@@ -43,7 +43,10 @@ const foodSlice = createSlice({
       state.x = newFoodPosition.x;
       state.y = newFoodPosition.y;
     });
-    builder.addCase(restartGame, () => initialState);
+    builder.addCase(restartGame, (state, action) => {
+      state.x = Math.floor(action.payload / 2) - 5;
+      state.y = Math.floor(action.payload / 2) + 1;
+    });
   },
 });
 

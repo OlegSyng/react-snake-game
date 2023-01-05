@@ -11,7 +11,5 @@
     display: grid;
     width: 100vmin;
     height: 100vmin;
-    grid-template-columns: repeat(51, 1fr);
-    grid-template-rows: repeat(51, 1fr);
     background-color: var(--snake-game-color-grey);
 }

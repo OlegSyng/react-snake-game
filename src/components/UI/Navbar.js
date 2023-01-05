@@ -24,6 +24,20 @@ const Navbar = () => {
     {value: 20, label: 10},
   ];
 
+  const gridSizeOptions = [
+    {value: 21, label: 21},
+    {value: 25, label: 25},
+    {value: 31, label: 31},
+    {value: 35, label: 35},
+    {value: 41, label: 41},
+    {value: 45, label: 45},
+    {value: 51, label: 51},
+  ]
+
+  const gridSizeHandler = (choice) => {
+    dispatch(gameActions.gridSize(choice.value));
+  }
+
   const snakeSpeedHandler = (choice) => {
     dispatch(gameActions.snakeSpeed(choice.value));
   }
@@ -37,7 +51,8 @@ const Navbar = () => {
       <div className={classes["navbar-score"]}>
         Score<span>{game.score}</span>
       </div>
-      <Select options={snakeSpeedOptions} name="Snake speed" onChange={snakeSpeedHandler} defaultValue={snakeSpeedOptions[0]} />
+      <Select options={gridSizeOptions} className={classes.select} name="Grid size" onChange={gridSizeHandler} placeholder="Grid size" />
+      <Select options={snakeSpeedOptions} name="Snake speed" onChange={snakeSpeedHandler} placeholder="Snake speed" />
       <Button onClick={onPauseHandler}>
         {!game.isPaused ? "Pause" : "Resume"}
       </Button>
